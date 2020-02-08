@@ -34,7 +34,7 @@ def add_info(post):
     try:
         obj = InfoMessage()
         obj.message = post['message']
-        obj.value = int(post['level'])
+        obj.level = int(post['level'])
         InfoMessage.save_model(obj)
     except Exception as exc:
         return repr(exc)
