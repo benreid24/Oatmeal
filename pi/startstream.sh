@@ -1,0 +1,1 @@
+raspivid -o - -n -t 0 -hf -w 960 -h 720 -fps 30 | cvlv -vvv stream:///dev/stdin --sout '#rtp{sdp=rtsp://12345}' :demux=h264 :rtsp-caching=1000

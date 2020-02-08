@@ -1,0 +1,43 @@
+<html>
+  <head>
+    <title>Oatmeal</title>
+
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'app/main.css' %}" />
+
+   <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+   <script type="text/javascript">
+      google.charts.load('current', {'packages':['gauge']});
+      google.charts.setOnLoadCallback(setupCharts);
+
+      function drawTempGauge(name, temp) {
+
+        var data = google.visualization.arrayToDataTable([
+          ['Label', 'Value'],
+          [name, temp]
+        ]);
+
+        var options = {
+          width: 400, height: 120,
+          greenFrom: 65, greenTo: 77,
+          redFrom: 77, redTo: 90,
+          yellowFrom:50, yellowTo: 65,
+          min: 50, max: 90,
+          majorTicks: 10,
+          minorTicks: 5,
+          yellowColor: '#037ffc'
+        };
+
+        var chart = new google.visualization.Gauge(document.getElementById(name+"-gauge"));
+        chart.draw(data, options);
+      }
+
+      function setupCharts() {
+          drawTempGauge('Temp', 72);
+      }
+    </script>
+  </head>
+  <body>
+    <div id="Temp-gauge" style="width: 400px; height: 120px;"></div>
+  </body>
+</html>

@@ -6,7 +6,8 @@ from . import db
 
 
 def index(request):
-    return HttpResponse('This is where I will build the site')
+    context = {}
+    return render(request, 'app/index.html', context)
 
 
 @csrf_exempt
