@@ -1,3 +1,5 @@
+import datetime
+
 from .models import SensorReading
 from .models import InfoMessage
 from .models import VideoUrl
@@ -51,3 +53,34 @@ def set_url(post):
         obj.save()
     except Exception as exc:
         return repr(exc)
+
+
+def get_sensor_readings(stype, tzname):
+    now = datetime.datetime.now(datetime.timezone.utc)
+    yday = now - datetime.timedelta(days=1)
+    data = SensorReading.objects.filter(
+        updated__range=(yday, now),
+        stype=stype
+    ).order_by('name', '-updated')
+    output = {}
+    for reading in data:
+        if reading.name not in output.keys():
+            output[reading.name] = {
+                'value': reading.value,
+                'updated': reading.updated.astimezone(tzname).strftime('%H:%M:%S (%b %d)'),
+                'history': [{
+                    'value': reading.value,
+                    'time': reading.updated
+                }]
+            }
+        else:
+            output[reading.name]['history'].append({
+                'value': reading.value,
+                'time': reading.updated.astimezone(tzname)
+            })
+
+    output = [{
+        'name': key,
+        **value
+    } for key, value in output.items()]
+    return output

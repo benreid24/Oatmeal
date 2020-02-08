@@ -1,12 +1,16 @@
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
+from django.utils import timezone
 
 from . import db
 
 
 def index(request):
-    context = {}
+    tzname = request.session.get('django_timezone')
+    context = {
+        'temps': db.get_sensor_readings('temp', tzname)
+    }
     return render(request, 'app/index.html', context)
 
 

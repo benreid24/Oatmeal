@@ -7,16 +7,14 @@
 
    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
    <script type="text/javascript">
-      google.charts.load('current', {'packages':['gauge']});
+      google.charts.load('current', {'packages':['gauge', 'line']});
       google.charts.setOnLoadCallback(setupCharts);
 
       function drawTempGauge(name, temp) {
-
         var data = google.visualization.arrayToDataTable([
           ['Label', 'Value'],
           [name, temp]
         ]);
-
         var options = {
           width: 400, height: 120,
           greenFrom: 65, greenTo: 77,
@@ -27,17 +25,77 @@
           minorTicks: 5,
           yellowColor: '#037ffc'
         };
-
         var chart = new google.visualization.Gauge(document.getElementById(name+"-gauge"));
         chart.draw(data, options);
       }
 
+      function drawTempLine(name, datapoints) {
+        var data = new google.visualization.DataTable();
+        data.addColumn('datetime', 'Time');
+        data.addColumn('number', 'Temperature');
+        data.addRows(datapoints);
+        var options = {
+            titlePosition: 'none',
+            legend: {position: 'none'},
+            width: 400,
+            height: 300,
+            backgroundColor: '#777777',
+            chartArea: {
+                backgroundColor: '#999999',
+            },
+            colors: ['white'],
+            vAxis: {
+                title: 'Temperature',
+                titleTextStyle: {
+                    color: 'white'
+                },
+                viewWindow: {
+                    min: 60,
+                    max: 82
+                },
+                gridlines: {
+                    color: 'white',
+                    interval: 5,
+                },
+                textStyle: {
+                    color: 'white'
+                }
+            },
+            hAxis: {
+                title: 'Time',
+                titleTextStyle: {
+                    color: 'white'
+                },
+                gridlines: {
+                    color: 'white'
+                },
+                textStyle: {
+                    color: 'white'
+                }
+            }
+        };
+        var chart = new google.charts.Line(document.getElementById(name+'-line'));
+        chart.draw(data, google.charts.Line.convertOptions(options));
+      }
+
       function setupCharts() {
-          drawTempGauge('Temp', 72);
+          let datapoints;
+          {% for temp in temps %}
+            drawTempGauge('{{ temp.name }}', {{ temp.value }});
+            datapoints = [
+                {% for hist in temp.history %}
+                    [new Date("{{ hist.time.isoformat }}"), {{hist.value}}],
+                {% endfor %}
+            ];
+            drawTempLine('{{ temp.name }}', datapoints);
+          {% endfor %}
       }
     </script>
   </head>
   <body>
-    <div id="Temp-gauge" style="width: 400px; height: 120px;"></div>
+    {% for temp in temps %}
+        <div id="{{ temp.name }}-gauge" style="width: 400px; height: 120px;"></div>
+        <div id="{{ temp.name }}-line" style="width: 400px; height: 120px;"></div>
+    {% endfor %}
   </body>
 </html>
