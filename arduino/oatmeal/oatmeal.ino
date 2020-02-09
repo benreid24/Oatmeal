@@ -2,7 +2,7 @@
 #include "Screen.h"
 #include "Motion.h"
 
-Temp temp[] = {Temp(A0)};
+Temp temp[] = {Temp(A0), Temp(A2)};
 const size_t n = sizeof(temp) / sizeof(temp[0]);
 
 Screen screen;
