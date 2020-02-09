@@ -1,29 +1,34 @@
-#include <DHT.h>
+#include "Temp.h"
 #include "Screen.h"
+#include "Motion.h"
 
-DHT dht1 = DHT(A0, DHT22);
+Temp temp[] = {Temp(A0)};
+const size_t n = sizeof(temp) / sizeof(temp[0]);
+
 Screen screen;
 
+unsigned int lastRender = 0;
+
 void setup() {
-  // put your setup code here, to run once:
   Serial.begin(115200);
   Serial.println("I am working");
   delay(500);
-  dht1.begin();
+
+  for (unsigned int i = 0; i<n; ++i) {
+    temp[i].init();
+  }
   screen.init();
 }
 
 void loop() {
-  const float f = dht1.readTemperature() * 1.8 + 32;
-  const float h = dht1.readHumidity();
-  
-  Serial.print(f);
-  Serial.print("F ");
-  Serial.print(h);
-  Serial.println("%");
+  Serial.println(Motion::moved());
 
-  screen.updateReading(0, f, h);
-  screen.updateReading(1, f-8, h-5);
+  if (millis() - lastRender >= 2000) {
+    lastRender = millis();
+    for (unsigned int i = 0; i<n; ++i) {
+      screen.updateReading(i, temp[i].readTemp(), temp[i].readHumidity());
+    }
+  }
     
-  delay(2000);
+  delay(200);
 }
