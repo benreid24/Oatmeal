@@ -23,7 +23,7 @@ void setup() {
 
 void loop() {
   if (Motion::moved()) {
-    Output::send("moved", 1);
+    Output::send("motion", 1);
     Serial.println("Motion detected");
   }
 

@@ -5,6 +5,10 @@ import secret
 
 ENDPOINT = 'localhost:8000'
 
+CRITICAL = 1
+WARNING = 2
+INFO = 3
+
 
 def _send_request(url, params):
     params['pw'] = secret.get()
@@ -49,6 +53,18 @@ def set_video(url):
         'url': url
     }
     response = _send_request('/updatevideo', params)
+    if response.status != 204:
+        print('Error:', response.status, response.read())
+        return False
+    return True
+
+
+def send_email(subject, msg):
+    params = {
+        'subject': subject,
+        'msg': msg
+    }
+    response = _send_request('/sendmail', params)
     if response.status != 204:
         print('Error:', response.status, response.read())
         return False
