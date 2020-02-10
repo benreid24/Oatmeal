@@ -24,8 +24,8 @@ void Output::send(const char* id, int n, float value) {
   printFloat(fbuf, value);
 
   char buf[128];
-  sprintf(buf, "f %s%d %s;", id, n, fbuf);
-  Serial1.print(buf);
+  sprintf(buf, "f %s%d %s", id, n, fbuf);
+  Serial1.println(buf);
 }
 
 void Output::send(const char* id, float value) {
@@ -38,8 +38,8 @@ void Output::send(const char* id, float value) {
   printFloat(fbuf, value);
 
   char buf[128];
-  sprintf(buf, "f %s %s;", id, fbuf);
-  Serial1.print(buf);
+  sprintf(buf, "f %s %s", id, fbuf);
+  Serial1.println(buf);
 }
 
 void Output::send(const char* id, const char* value) {
@@ -49,6 +49,6 @@ void Output::send(const char* id, const char* value) {
   }
   
   char buf[128];
-  sprintf(buf, "f %s %s;", id, value);
-  Serial1.print(buf);
+  sprintf(buf, "f %s %s", id, value);
+  Serial1.println(buf);
 }
