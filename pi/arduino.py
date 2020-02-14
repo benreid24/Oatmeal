@@ -18,9 +18,32 @@ def get_readings():
     char = serialport.read(1)
     while char:
         data = data + char.decode('utf-8')
+        char = serialport.read(1)
     
     data, points = _parse_data(data)
     return points
+
+
+def heat(on):
+    if on:
+        _write('heaton')
+    else:
+        _write('heatoff')
+
+
+def light(on):
+    if on:
+        _write('lighton')
+    else:
+        _write('lightoff')
+
+
+def mist(ms):
+    _write(f'mist {ms}')
+
+
+def _write(data):
+    serialport.write(f'{data}\n'.encode('ascii'))
 
 
 def _parse_data(data):

@@ -1,6 +1,7 @@
 import datetime
 
 import web
+import arduino
 
 ERROR_TIMEOUT = 30 * 60
 last_error = None
@@ -106,15 +107,15 @@ def _set_heat_active(active):
         heat_time = None
     heat_active = active
 
-    # TODO - send command to arduino
+    arduino.heat(active)
 
 
 def _set_light_active(active):
-    pass # TODO - send command to arduino
+    arduino.light(active)
 
 
 def _mist(seconds):
-    pass # TODO - send command to arduino
+    arduino.mist(int(seconds*1000))
 
 
 def _error(msg):
