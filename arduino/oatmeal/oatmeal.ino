@@ -1,7 +1,7 @@
 #include "Temp.h"
 #include "Screen.h"
 #include "Motion.h"
-#include "Output.h"
+#include "Pi.h"
 
 Temp temp[] = {Temp(A0), Temp(A2)};
 const size_t n = sizeof(temp) / sizeof(temp[0]);
@@ -18,12 +18,12 @@ void setup() {
     temp[i].init();
   }
   screen.init();
-  Output::init();
+  Pi::init();
 }
 
 void loop() {
   if (Motion::moved()) {
-    Output::send("motion", 1);
+    Pi::send("motion", 1);
     Serial.println("Motion detected");
   }
 
@@ -33,8 +33,8 @@ void loop() {
       const float t = temp[i].readTemp();
       const float h = temp[i].readHumidity();
       screen.updateReading(i, t, h);
-      Output::send("temp", i, t);
-      Output::send("humid", i, h);
+      Pi::send("temp", i, t);
+      Pi::send("humid", i, h);
     }
   }
     

@@ -1,5 +1,5 @@
 #include <Arduino.h>
-#include "Output.h"
+#include "Pi.h"
 
 namespace {
 void printFloat(char* buf, float f) {
@@ -10,11 +10,11 @@ void printFloat(char* buf, float f) {
 }
 }
 
-void Output::init() {
+void Pi::init() {
   Serial1.begin(115200);
 }
 
-void Output::send(const char* id, int n, float value) {
+void Pi::send(const char* id, int n, float value) {
   if (!Serial1) {
     Serial.println("Serial1 not ready, skipping output");
     return;
@@ -28,7 +28,7 @@ void Output::send(const char* id, int n, float value) {
   Serial1.println(buf);
 }
 
-void Output::send(const char* id, float value) {
+void Pi::send(const char* id, float value) {
   if (!Serial1) {
     Serial.println("Serial1 not ready, skipping output");
     return;
@@ -42,7 +42,7 @@ void Output::send(const char* id, float value) {
   Serial1.println(buf);
 }
 
-void Output::send(const char* id, const char* value) {
+void Pi::send(const char* id, const char* value) {
   if (!Serial1) {
     Serial.println("Serial1 not ready, skipping output");
     return;
