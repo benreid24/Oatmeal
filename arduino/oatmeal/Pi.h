@@ -3,11 +3,32 @@
 
 class Pi {
 public:
-  static void init();
+  Pi();
 
-  static void send(const char* id, int n, float value);
-  static void send(const char* id, float value);
-  static void send(const char* id, const char* msg);
+  void init();
+
+  struct Command {
+    enum Type {
+      None,
+      HeatOn,
+      HeatOff,
+      LightOn,
+      LightOff,
+      Mist
+    }type;
+    int param;
+  };
+
+  void send(const char* id, int n, float value);
+  void send(const char* id, float value);
+  void send(const char* id, const char* msg);
+
+  Command poll();
+
+private:
+  char buf[64];
+
+  bool append(char c);  
 };
 
 #endif
