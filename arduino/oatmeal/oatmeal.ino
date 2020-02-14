@@ -25,7 +25,6 @@ void setup() {
 void loop() {
   if (Motion::moved()) {
     pi.send("motion", 1);
-    Serial.println("Motion detected");
   }
 
   if (millis() - lastRender >= 2000) {
@@ -37,6 +36,13 @@ void loop() {
       pi.send("temp", i, t);
       pi.send("humid", i, h);
     }
+  }
+
+  Pi::Command cmd = pi.poll();
+  if (cmd.type != Pi::Command::None) {
+    Serial.print(cmd.type);
+    Serial.print(" ");
+    Serial.println(cmd.param);
   }
     
   delay(500);

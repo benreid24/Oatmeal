@@ -11,7 +11,7 @@ void printFloat(char* buf, float f) {
 }
 
 Pi::Pi() {
-  memcpy(buf, 0, sizeof(buf));
+  buf[0] = 0;
 }
 
 void Pi::init() {
@@ -58,20 +58,42 @@ void Pi::send(const char* id, const char* value) {
 }
 
 Pi::Command Pi::poll() {
-  Command cmd;
-  cmd.type = Command::None;
-  cmd.param = 0;
-  int b = Serial1.read();
+  Command command;
+  command.type = Command::None;
+  command.param = 0;
+  int b = Serial.read();
   while (b != -1) {
     if (static_cast<char>(b) == '\n') {
-      //TODO - parse into Command struct and return
+      char cmd[16];
+      unsigned int i = 0;
+      for (; i<strlen(buf) && buf[i]!=' ' && i<15; ++i) {
+        cmd[i] = buf[i];
+      }
+      cmd[i] = 0;
+
+      if (strcmp(cmd, "heaton") == 0) command.type = Command::HeatOn;
+      else if (strcmp(cmd, "heatoff") == 0) command.type = Command::HeatOff;
+      else if (strcmp(cmd, "lighton") == 0) command.type = Command::LightOn;
+      else if (strcmp(cmd, "lightoff") == 0) command.type = Command::LightOff;
+      else if (strcmp(cmd, "mist") == 0) {
+        command.type = Command::Mist;
+        command.param = String(&buf[i]).toInt();
+      }
+      else {
+        Serial.print("Unrecognized command '");
+        Serial.print(cmd);
+        Serial.println("'");
+      }
+      buf[0] = 0;
+      break;
     }
     else if (!append(b)) {
       Serial.println("Error appending to serial buffer, buffer full. Clearing");
       buf[0] = 0;
-      return cmd;
     }
+    b = Serial.read();
   }
+  return command;
 }
 
 bool Pi::append(char c) {
@@ -80,4 +102,5 @@ bool Pi::append(char c) {
     return false;
   buf[len] = c;
   buf[len+1] = 0;
+  return true;
 }
