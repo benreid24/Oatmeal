@@ -61,7 +61,7 @@ Pi::Command Pi::poll() {
   Command command;
   command.type = Command::None;
   command.param = 0;
-  int b = Serial.read();
+  int b = Serial1.read();
   while (b != -1) {
     if (static_cast<char>(b) == '\n') {
       char cmd[16];
@@ -91,7 +91,7 @@ Pi::Command Pi::poll() {
       Serial.println("Error appending to serial buffer, buffer full. Clearing");
       buf[0] = 0;
     }
-    b = Serial.read();
+    b = Serial1.read();
   }
   return command;
 }
