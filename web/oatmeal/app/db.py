@@ -78,9 +78,4 @@ def get_sensor_readings(stype, tzname):
                 'value': reading.value,
                 'time': reading.updated.astimezone(tzname)
             })
-
-    output = [{
-        'name': key,
-        **value
-    } for key, value in output.items()]
     return output

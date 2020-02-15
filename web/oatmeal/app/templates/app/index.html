@@ -11,139 +11,52 @@
 
     <link rel="stylesheet" href="{% static 'app/dark.css' %}" />
     <link rel="stylesheet" href="{% static 'app/main.css' %}" />
+    <script src="{% static 'app/charts.js' %}"></script>
 
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <script type="text/javascript">
-      google.charts.load('current', {'packages':['gauge', 'line']});
+      google.charts.load('current', {'packages':['gauge', 'line', 'corechart']});
       google.charts.setOnLoadCallback(setupCharts);
-
-      function drawTempGauge(name, temp) {
-        var data = google.visualization.arrayToDataTable([
-          ['Label', 'Value'],
-          [name, temp]
-        ]);
-        var options = {
-          width: '100%', height: 300,
-          greenFrom: 70, greenTo: 83,
-          redFrom: 83, redTo: 90,
-          yellowFrom:60, yellowTo: 70,
-          min: 60, max: 90,
-          majorTicks: ['60°', '65°', '70°', '75°', '80°', '85°', '90°'],
-          minorTicks: 5,
-          yellowColor: '#037ffc'
-        };
-        var formatter = new google.visualization.NumberFormat({'suffix': '°F'});
-        formatter.format(data, 1);
-        var chart = new google.visualization.Gauge(document.getElementById(name+"-tgauge"));
-        chart.draw(data, options);
-      }
-
-      function drawHumidGauge(name, humid) {
-        var data = google.visualization.arrayToDataTable([
-          ['Label', 'Value'],
-          [name, humid]
-        ]);
-        var options = {
-          width: '100%', height: 300,
-          greenFrom: 60, greenTo: 100,
-          redFrom: 20, redTo: 50,
-          yellowFrom: 50, yellowTo: 60,
-          min: 20, max: 100,
-          majorTicks: ['20%', '30%', '40%', '50%', '60%', '70%', '80%', '90%', '100%'],
-          minorTicks: 5,
-        };
-        var formatter = new google.visualization.NumberFormat({'suffix': '%'});
-        formatter.format(data, 1);
-        var chart = new google.visualization.Gauge(document.getElementById(name+"-hgauge"));
-        chart.draw(data, options);
-      }
-
-      function drawTempLine(name, datapoints) {
-        var data = new google.visualization.DataTable();
-        data.addColumn('datetime', 'Time');
-        data.addColumn('number', 'Temperature');
-        data.addRows(datapoints);
-        var options = {
-            titlePosition: 'none',
-            legend: {position: 'none'},
-            width: '100%',
-            height: 330,
-            backgroundColor: '#777777',
-            chartArea: {
-                backgroundColor: '#999999',
-            },
-            colors: ['red'],
-            vAxis: {
-                title: 'Temperature',
-                titleTextStyle: {
-                    color: 'white'
-                },
-                viewWindow: {
-                    min: 60,
-                    max: 87
-                },
-                gridlines: {
-                    color: 'white',
-                    interval: 5,
-                },
-                textStyle: {
-                    color: 'white'
-                },
-                format: '##°F'
-            },
-            hAxis: {
-                title: 'Time',
-                titleTextStyle: {
-                    color: 'white'
-                },
-                gridlines: {
-                    color: 'white'
-                },
-                textStyle: {
-                    color: '#bbbbff',
-                    fontSize: 16
-                },
-                format: 'H:m'
-            }
-        };
-        var chart = new google.charts.Line(document.getElementById(name+'-line'));
-
-        google.visualization.events.addListener(chart, 'error', function (err) {
-          console.log(err.id, err.message);
-          google.visualization.errors.removeError(err.id);
-        });
-
-        chart.draw(data, google.charts.Line.convertOptions(options));
-      }
 
       function setupCharts() {
           let datapoints;
-          {% for temp in temps %}
-            drawTempGauge('{{ temp.name }}', {{ temp.value }});
-            drawHumidGauge('{{ temp.name }}', {{ temp.value }});
+          {% for zone in zones %}
+            drawTempGauge('{{ zone.name }}', {{ zone.temp.value }});
+            drawHumidGauge('{{ zone.name }}', {{ zone.humid.value }});
             datapoints = [
-                {% for hist in temp.history %}
-                    [new Date("{{ hist.time.isoformat }}"), {{hist.value}}],
+                {% for hist in zone.history %}
+                    [new Date("{{ hist.time.isoformat }}"), {{hist.temp}}, {{hist.humid}}],
                 {% endfor %}
             ];
-            drawTempLine('{{ temp.name }}', datapoints);
+            drawTempLine('{{ zone.name }}', datapoints);
           {% endfor %}
       }
     </script>
   </head>
   <body>
     <div class="container content">
-      {% for temp in temps %}
-        <div class="row gaugerow">
-          <div class="col-md-2"></div>
-          <div class="col-md-4" id="{{ temp.name }}-tgauge"></div>
-          <div class="col-md-4" id="{{ temp.name }}-hgauge">></div>
-          <div class="col-md-2"></div>
-        </div>
-        <div class="row">
-          <div class="col-md-12">
-            <div id="{{ temp.name }}-line"></div>
+      {% for pair in pairs %}
+        <div class="row zonerow">
+          {% for zone in pair %}
+          <div class="col-md-6 col-xs-12">
+            <div class="row">
+              <div class="col-md-12">
+                <h2 class="zonetitle">{{ zone.name }}</h2>
+              </div>
+            </div>
+            <div class="row gaugerow">
+              <div class="col-xs-2"></div>
+              <div class="col-xs-4" id="{{ zone.name }}-tgauge"></div>
+              <div class="col-xs-4" id="{{ zone.name }}-hgauge"></div>
+              <div class="col-xs-2"></div>
+            </div>
+            <div class="row">
+              <div class="col-xs-12">
+                <div id="{{ zone.name }}-tline" class="linediv"></div>
+              </div>
+            </div>
           </div>
+          {% endfor %}
         </div>
       {% endfor %}
     </div>

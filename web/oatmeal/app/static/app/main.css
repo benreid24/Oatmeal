@@ -7,8 +7,21 @@
 .gaugerow {
 	width: 80%;
 	margin: 0 auto;
+	height: 150px;
 }
 
-.row {
+.zonerow {
 	height: 300px;
+}
+
+.linediv {
+	background-color: #444444;
+	border-radius: 25px;
+}
+
+.zonetitle {
+	color: white;
+	font-style: italic;
+	font-weight: bold;
+	font-size: 24;
 }
