@@ -3,7 +3,7 @@ from urllib.parse import urlencode
 
 import secret
 
-ENDPOINT = 'localhost:8000'
+ENDPOINT = 'oatmeal.rocks'
 
 CRITICAL = 1
 WARNING = 2
