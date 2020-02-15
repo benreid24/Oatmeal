@@ -76,13 +76,9 @@
         };
         var chart = new google.charts.Line(document.getElementById(name+'-line'));
 
-        // listen for error
         google.visualization.events.addListener(chart, 'error', function (err) {
           console.log(err.id, err.message);
           google.visualization.errors.removeError(err.id);
-
-          // remove all errors
-          //google.visualization.errors.removeAll(container);
         });
 
         chart.draw(data, google.charts.Line.convertOptions(options));
