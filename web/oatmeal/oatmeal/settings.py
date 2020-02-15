@@ -25,7 +25,11 @@ SECRET_KEY = '4k6l_d*xjnjp&u*!6iu2hyxhal!$s!onjw^&(@vcw+_1kz4s7^'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    'localhost',
+    'oatmeal.rocks',
+    'www.oatmeal.rocks'
+]
 
 
 # Application definition
