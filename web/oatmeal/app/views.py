@@ -24,7 +24,9 @@ def index(request):
         'pairs': pairs,
         'zones': zones,
         'messages': messages,
-        'motion': motion
+        'motion': motion,
+        'video': 'http://localhost:8080/video' #db.get_video_url()
+        # TODO https://www.makeuseof.com/tag/live-stream-youtube-raspberry-pi/
     }
     return render(request, 'app/index.html', context)
 

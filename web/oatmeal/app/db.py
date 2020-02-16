@@ -104,3 +104,10 @@ def get_motion():
     ).order_by('updated')
 
     return [m.updated for m in data]
+
+
+def get_video_url():
+    data = VideoUrl.objects.all()
+    if not data or len(data) > 1:
+        return ''
+    return 'rtp://' + data[0].url
