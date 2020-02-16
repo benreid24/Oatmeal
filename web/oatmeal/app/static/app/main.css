@@ -12,6 +12,8 @@
 
 .zonerow {
 	height: 300px;
+	padding-top: 30px;
+	padding-bottom: 50px;
 }
 
 .linediv {
@@ -87,4 +89,15 @@
 
 .msgcrit {
 	color: #111111;
+}
+
+#motion-title {
+	font-weight: bold;
+	font-style: italic;
+	font-size: 24;
+}
+
+#motion_div {
+	background-color: #444444;
+	border-radius: 25px;
 }

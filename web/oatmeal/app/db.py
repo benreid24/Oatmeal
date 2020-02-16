@@ -93,3 +93,14 @@ def get_messages():
         'level': message.level,
         'time': message.updated
     } for message in data]
+
+
+def get_motion():
+    now = datetime.datetime.now(datetime.timezone.utc)
+    yday = now - datetime.timedelta(days=7)
+    data = SensorReading.objects.filter(
+        updated__range=(yday, now),
+        stype='motion'
+    ).order_by('updated')
+
+    return [m.updated for m in data]

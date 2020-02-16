@@ -1,3 +1,5 @@
+import datetime
+
 def create_zones(temps, humidity):
     zones = []
     for name, temp in temps.items():
@@ -46,3 +48,27 @@ def prepare_messages(messages, tz):
         'msg': msg['msg'],
         'time': msg['time'].astimezone(tz).strftime('%a %b %d %I:%M %p')
     } for msg in messages]
+
+
+def frequency_match_motion(motion, tz):
+    if not motion:
+        return []
+
+    bucket_len = datetime.timedelta(seconds=300)
+    bucket_beg = motion[0]
+
+    buckets = []
+    i = 0
+    while i < len(motion):
+        bucket = {
+            'time': bucket_beg.astimezone(tz),
+            'count': 0
+        }
+        while i < len(motion) and motion[i] < bucket_beg + bucket_len:
+            bucket['count'] += 1
+            i += 1
+        buckets.append(bucket)
+        bucket_beg += bucket_len
+
+    return buckets
+

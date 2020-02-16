@@ -17,10 +17,14 @@ def index(request):
     messages = db.get_messages()
     messages = util.prepare_messages(messages, tzname)
 
+    motion = db.get_motion()
+    motion = util.frequency_match_motion(motion, tzname)
+
     context = {
         'pairs': pairs,
         'zones': zones,
-        'messages': messages
+        'messages': messages,
+        'motion': motion
     }
     return render(request, 'app/index.html', context)
 

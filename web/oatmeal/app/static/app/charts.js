@@ -48,7 +48,7 @@ function drawHumidGauge(name, humid) {
   chart.draw(data, options);
 }
 
-function drawTempLine(name, datapoints) {
+function drawZoneLine(name, datapoints) {
   var data = new google.visualization.DataTable();
   data.addColumn('datetime', 'Time');
   data.addColumn('number', 'Temperature');
@@ -95,8 +95,43 @@ function drawTempLine(name, datapoints) {
 
   var div = document.getElementById(name + '-tline');
   var chart = new google.visualization.LineChart(div);
-  // var chart = new google
 
-  // chart.draw(data, options);
-  chart.draw(data, google.charts.Line.convertOptions(options));
+  chart.draw(data, options);
+}
+
+function drawMotionLine(datapoints) {
+  var data = new google.visualization.DataTable();
+  data.addColumn('datetime', 'Time');
+  data.addColumn('number', 'Motion');
+  data.addRows(datapoints);
+  var options = {
+    titlePosition: 'none',
+    legend: {position: 'none'},
+    width: '100%',
+    height: 330,
+    backgroundColor: 'transparent',
+    chartArea: {
+      backgroundColor: '#333333',
+    },
+    colors: ['#33ff33'],
+    curveType: 'function',
+    vAxes: {
+      0: {
+        gridlines: {color: 'transparent'},
+        textStyle: {color: 'transparent'},
+      }
+    },
+    hAxis: {
+      title: 'Time',
+      titleTextStyle: {color: 'white', fontSize: 18},
+      gridlines: {color: 'transparent'},
+      textStyle: {color: 'white', fontSize: 14},
+      format: 'HH:mm'
+    }
+  };
+
+  var div = document.getElementById('motion_div');
+  var chart = new google.visualization.LineChart(div);
+
+  chart.draw(data, options);
 }
