@@ -48,19 +48,21 @@
       <div class="row">
         <div class="col-md-4 col-xs-2"></div>
         <div id="messagearea" class="col-md-4 col-xs-8">
-          <h2 id="msgtitle">Messages</h2>
-          {% for msg in messages %}
-            <div class="row messagerow">
-              <div class="col-xs-1"></div>
-              <div class="col-xs-10 messagecol {{msg.class}}-bg">
-                <span>
-                  <p class="msgdate {{msg.class}}">{{msg.time}}</p>
-                  <p class="message {{msg.class}}">{{msg.msg}}</p>
-                </span>
+          <div class="messagescroll">
+            <h2 id="msgtitle">Messages</h2>
+            {% for msg in messages %}
+              <div class="row messagerow">
+                <div class="col-xs-1"></div>
+                <div class="col-xs-10 messagecol {{msg.class}}-bg">
+                  <span>
+                    <p class="msgdate {{msg.class}}">{{msg.time}}</p>
+                    <p class="message {{msg.class}}">{{msg.msg}}</p>
+                  </span>
+                </div>
+                <div class="col-xs-1"></div>
               </div>
-              <div class="col-xs-1"></div>
-            </div>
-          {% endfor%}
+            {% endfor%}
+          </div>
         </div>
         <div class="col-md-4 col-xs-2"></div>
       </div>
