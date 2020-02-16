@@ -8,6 +8,9 @@ void printFloat(char* buf, float f) {
   const unsigned int decimal = i % 100;
   sprintf(buf, "%d.%d", whole, decimal);
 }
+
+auto& serial = Serial;
+
 }
 
 Pi::Pi() {
@@ -19,7 +22,7 @@ void Pi::init() {
 }
 
 void Pi::send(const char* id, int n, float value) {
-  if (!Serial1) {
+  if (!serial) {
     Serial.println("Serial1 not ready, skipping output");
     return;
   }
@@ -29,11 +32,11 @@ void Pi::send(const char* id, int n, float value) {
 
   char buf[128];
   sprintf(buf, "f i %s %d %s", id, n, fbuf);
-  Serial1.println(buf);
+  serial.println(buf);
 }
 
 void Pi::send(const char* id, float value) {
-  if (!Serial1) {
+  if (!serial) {
     Serial.println("Serial1 not ready, skipping output");
     return;
   }
@@ -43,25 +46,25 @@ void Pi::send(const char* id, float value) {
 
   char buf[128];
   sprintf(buf, "f n %s %s", id, fbuf);
-  Serial1.println(buf);
+  serial.println(buf);
 }
 
 void Pi::send(const char* id, const char* value) {
-  if (!Serial1) {
+  if (!serial) {
     Serial.println("Serial1 not ready, skipping output");
     return;
   }
   
   char buf[128];
   sprintf(buf, "s n %s %s", id, value);
-  Serial1.println(buf);
+  serial.println(buf);
 }
 
 Pi::Command Pi::poll() {
   Command command;
   command.type = Command::None;
   command.param = 0;
-  int b = Serial1.read();
+  int b = serial.read();
   while (b != -1) {
     if (static_cast<char>(b) == '\n') {
       char cmd[16];
@@ -91,7 +94,7 @@ Pi::Command Pi::poll() {
       Serial.println("Error appending to serial buffer, buffer full. Clearing");
       buf[0] = 0;
     }
-    b = Serial1.read();
+    b = serial.read();
   }
   return command;
 }
