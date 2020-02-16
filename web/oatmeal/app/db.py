@@ -79,3 +79,17 @@ def get_sensor_readings(stype, tzname):
                 'time': reading.updated.astimezone(tzname)
             })
     return output
+
+
+def get_messages():
+    now = datetime.datetime.now(datetime.timezone.utc)
+    yday = now - datetime.timedelta(days=7)
+    data = InfoMessage.objects.filter(
+        updated__range=(yday, now)
+    ).order_by('-updated')
+
+    return [{
+        'msg': message.message,
+        'level': message.level,
+        'time': message.updated
+    } for message in data]

@@ -30,5 +30,61 @@
 	color: #e1e1e1;
 	font-style: italic;
 	font-weight: bold;
-	font-size: 36;
+	font-size: 72;
+	padding-bottom: 20px;
+}
+
+#msgtitle {
+	padding-left: 10%;
+	font-size: 24;
+}
+
+#messagearea {
+	text-align: left;
+	background-color: #444444;
+	border-radius: 25px;
+	padding: -15px;
+}
+
+.messagerow {
+	padding-top: 5px;
+	padding-bottom: 5px;
+}
+
+.messagecol {
+	border-radius: 12px;
+}
+
+.msgdate {
+	font-weight: bold;
+}
+
+.message {
+	padding-left: 5%;
+	font-style: italic;
+	font-size: 16;
+}
+
+.msginfo-bg {
+	background-color: #333333;
+}
+
+.msginfo {
+	color: #eeeeee;
+}
+
+.msgwarn-bg {
+	background-color: #ee8833;
+}
+
+.msgwarn {
+	color: #111111;
+}
+
+.msgcrit-bg {
+	background-color: #ff4444;
+}
+
+.msgcrit {
+	color: #111111;
 }
