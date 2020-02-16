@@ -1,14 +1,14 @@
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
-from django.utils import timezone
+from pytz import timezone
 
 from . import db
 from . import util
 
 
 def index(request):
-    tzname = request.session.get('django_timezone')
+    tzname = timezone('US/Eastern')
 
     temps = db.get_sensor_readings('temp', tzname)
     humidity = db.get_sensor_readings('humid', tzname)
