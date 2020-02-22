@@ -15,7 +15,6 @@ NIGHT_START = datetime.time(21, 0)
 NIGHT_END = datetime.time(9, 0)
 
 MIN_HUMIDITY = 50
-RECOVERY_HUMIDITY = 70
 RETRY_INTERVAL = 60
 humid_trys = None
 last_spray_try = None
@@ -26,18 +25,20 @@ night_mist = None
 heat_active = False
 heat_time = None
 
+light_on = False
 
-def climate_control(high_temp, low_temp, humidity):
+
+def climate_control(now, high_temp, low_temp, humidity):
     global last_spray_try
     global humid_trys
     global morning_mist
     global night_mist
-    now = datetime.datetime.now()
 
     # Day/Night Lighting
     if _is_night(now):
-        _set_heat_active(False)
         _set_light_active(False)
+        if high_temp > MIN_TEMP:
+            _set_heat_active(False)
     else:
         _set_light_active(True)
 
@@ -69,12 +70,15 @@ def climate_control(high_temp, low_temp, humidity):
             _mist(3)
             if humid_trys > 3:
                 _error(f'Humidity is {humidity} despite {humid_trys} three second mistings')
+    else:
+        last_spray_try = None
+        humid_trys = None
 
     # Morning Spray
     if now.time().hour == NIGHT_END.hour:
         mist = True
         if not morning_mist:
-            morning_mist = now()
+            morning_mist = now
         elif morning_mist.date().day == now.date().day:
             mist = False
         if mist:
@@ -86,7 +90,7 @@ def climate_control(high_temp, low_temp, humidity):
         mist = True
         if not night_mist:
             night_mist = now
-        if night_mist.date().day == now.date().day:
+        elif night_mist.date().day == now.date().day:
             mist = False
         if mist:
             night_mist = now
@@ -102,7 +106,11 @@ def _set_heat_active(active):
     global heat_time
 
     if active and not heat_active:
+        web.log_message('Turning on heat', web.INFO)
         heat_time = datetime.datetime.now()
+    elif heat_active and not active:
+        web.log_message('Turning off heat', web.INFO)
+
     if not active:
         heat_time = None
     heat_active = active
@@ -111,10 +119,17 @@ def _set_heat_active(active):
 
 
 def _set_light_active(active):
+    global light_on
+    if active and not light_on:
+        web.log_message('Turning on light', web.INFO)
+    elif not active and light_on:
+        web.log_message('Turning off light', web.INFO)
+    light_on = active
     arduino.light(active)
 
 
 def _mist(seconds):
+    web.log_message(f'Misting for {seconds} seconds', web.INFO)
     arduino.mist(int(seconds*1000))
 
 
@@ -126,7 +141,8 @@ def _error(msg):
     now = datetime.datetime.now()
     if not last_error:
         last_error = now
-    elif now - last_error).total_seconds() < ERROR_TIMEOUT:
+    elif (now - last_error).total_seconds() < ERROR_TIMEOUT:
         send = False
     if send:
+        web.log_message(msg, web.CRITICAL)
         web.send_email('CRITICAL: Climate Control Error', msg)

@@ -75,7 +75,7 @@ def main():
                 web.set_sensor(name, sensor['value'], sensor['type'])
             for msg in messages:
                 print(f'Sending message "{msg}"')
-                web.log_message(msg, web.INFO)
+                web.log_message(msg, web.WARNING)
         except Exception as err:
             web.log_message(f'Failed to decode arduino data: {err}', web.WARNING)
 
@@ -97,7 +97,7 @@ def main():
 
         # Climate Control
         humidity = statistics.mean(humidity)
-        controller.climate_control(high_temp, low_temp, humidity)
+        controller.climate_control(now, high_temp, low_temp, humidity)
 
         # Video Feed Update
         if (now - last_ipfetch).total_seconds() >= IP_FETCH_PERIOD:

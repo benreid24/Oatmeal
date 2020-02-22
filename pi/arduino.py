@@ -43,6 +43,8 @@ def mist(ms):
 
 
 def _write(data):
+    print(f'Serial command: {data}')
+    return
     serialport.write(f'{data}\n'.encode('ascii'))
 
 
