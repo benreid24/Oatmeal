@@ -1,5 +1,6 @@
 from urllib import request
 import subprocess
+import os
 import smtplib
 from email.message import EmailMessage
 
@@ -13,5 +14,6 @@ def get_ip():
 
 
 def start_stream():
-    process = subprocess.Popen(['bash', './startstream.sh', STREAM_URL])
+    null = open(os.devnull, 'w')
+    process = subprocess.Popen(['bash', './startstream.sh', STREAM_URL], stderr=null, stdout=null)
     return process

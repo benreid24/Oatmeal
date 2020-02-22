@@ -31,7 +31,7 @@ def set_sensor(name, reading, stype):
     response = _send_request('/setsensor', params)
 
     if response.status != 204:
-        print('Error:', response.status, response.read())
+        print('Sensor Error:', response.status, response.read())
         return False
     return True
 
@@ -43,7 +43,7 @@ def log_message(msg, severity):
     }
     response = _send_request('/addinfo', params)
     if response.status != 204:
-        print('Error:', response.status, response.read())
+        print('Log Error:', response.status, response.read())
         return False
     return True
 
@@ -54,7 +54,7 @@ def set_video(url):
     }
     response = _send_request('/updatevideo', params)
     if response.status != 204:
-        print('Error:', response.status, response.read())
+        print('Video Error:', response.status, response.read())
         return False
     return True
 
@@ -66,6 +66,6 @@ def send_email(subject, msg):
     }
     response = _send_request('/sendmail', params)
     if response.status != 204:
-        print('Error:', response.status, response.read())
+        print('Email Error:', response.status, response.read())
         return False
     return True

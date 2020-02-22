@@ -11,10 +11,10 @@ ERROR_TIMEOUT = 30 * 60
 IP_FETCH_PERIOD = 60 * 60
 
 NAME_MAP = {
-    'humid0': 'Hot Zone Humidity',
-    'humid1': 'Cold Zone Humidity',
-    'temp0': 'Hot Zone Temp',
-    'temp1': 'Cold Zone Temp',
+    'humid0': 'Hot Zone',
+    'humid1': 'Cold Zone',
+    'temp0': 'Hot Zone',
+    'temp1': 'Cold Zone',
     'motion': 'Motion Tracker'
 }
 
@@ -28,6 +28,9 @@ def main():
 
     last_error = None
     last_ipfetch = datetime.datetime.now()
+
+    last_reading = datetime.datetime.now()
+    humidity_avg = 75
 
     while True:
         now = datetime.datetime.now()
@@ -49,10 +52,10 @@ def main():
                 name = reading['name'] if 'num' not in reading.keys() \
                                     else reading['name'] + str(reading['num'])
                 stype = reading['name']
-                if isinstance(data['value'], float):
+                if isinstance(reading['value'], float):
                     sensors[name] = {
                         'value': reading['value'],
-                        'type:': stype
+                        'type': stype
                     }
                     if stype == 'temp':
                         if not high_temp:
@@ -77,33 +80,53 @@ def main():
                 print(f'Sending message "{msg}"')
                 web.log_message(msg, web.WARNING)
         except Exception as err:
+            print(f'Error decoding data: {err}')
             web.log_message(f'Failed to decode arduino data: {err}', web.WARNING)
 
-        # Sensor read error
-        if not high_temp or not low_temp:
-            print('Failed to read temperature')
-            send = True
-            if not last_error:
-                last_error = now
-            elif (now - last_error).total_seconds() < ERROR_TIMEOUT:
-                send = False
-            if send:
-                web.log_message('Failed to read temperature', web.CRITICAL)
+        try:
+
+            # Sensor read error
+            if not high_temp or not low_temp:
+                if (now - last_reading).total_seconds() >= 60:
+                    print('Failed to read temperature')
+                    send = True
+                    if not last_error:
+                        last_error = now
+                    elif (now - last_error).total_seconds() < ERROR_TIMEOUT:
+                        send = False
+                    if send:
+                        web.log_message('Failed to read temperature', web.CRITICAL)
+                        web.send_email(
+                            'CRITICAL: Temperature read failure',
+                            'Failed to read tank temperature. Check on Oatmeal ASAP'
+                        )
+                        last_error = now
+            else:
+                last_reading = now
+
+            # Climate Control
+            if humidity:
+                humidity_avg = statistics.mean(humidity)
+            print(f'High temp: {high_temp}. Low temp: {low_temp}. Humidity: {humidity_avg}')
+            if high_temp and low_temp and humidity_avg:
+                controller.climate_control(now, high_temp, low_temp, humidity_avg)
+
+            # Video Feed Update
+            if (now - last_ipfetch).total_seconds() >= IP_FETCH_PERIOD:
+                last_ipfetch = now
+                ip = util.get_ip()
+                web.set_video(f'{ip}:42069')
+        
+        except Exception as err:
+            print(f'Error: {err}')
+            try:
+                web.log_message(f'Runtime error: {err}', web.CRITICAL)
                 web.send_email(
-                    'CRITICAL: Temperature read failure',
-                    'Failed to read tank temperature. Check on Oatmeal ASAP'
+                    'CRITICAL: Pi Encountered an Error',
+                    f'Recovered from runtime error: {err}'
                 )
-                last_error = now
-
-        # Climate Control
-        humidity = statistics.mean(humidity)
-        controller.climate_control(now, high_temp, low_temp, humidity)
-
-        # Video Feed Update
-        if (now - last_ipfetch).total_seconds() >= IP_FETCH_PERIOD:
-            last_ipfetch = now
-            ip = util.get_ip()
-            web.set_video(f'{ip}:42069')
+            except Exception as err:
+                print(f'CRITICAL: Exception while reporting on exception: {err}')
 
         time.sleep(10)
 
