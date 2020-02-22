@@ -2,6 +2,8 @@ import datetime
 import smtplib
 from email.message import EmailMessage
 
+from . import secret
+
 
 def create_zones(temps, humidity):
     zones = []
@@ -77,6 +79,9 @@ def frequency_match_motion(motion, tz):
 
 
 def send_email(post):
+    if not secret.valid_pw(post['pw']):
+        return 'Invalid password'
+
     try:
         smtp = smtplib.SMTP('localhost')
         msg = EmailMessage()
