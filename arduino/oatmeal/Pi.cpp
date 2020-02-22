@@ -9,7 +9,7 @@ void printFloat(char* buf, float f) {
   sprintf(buf, "%d.%d", whole, decimal);
 }
 
-auto& serial = Serial;
+auto& serial = Serial1;
 
 }
 
