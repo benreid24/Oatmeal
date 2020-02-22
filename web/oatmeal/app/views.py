@@ -51,3 +51,11 @@ def update_video(request):
     if not error:
         return HttpResponse(status=204)
     return HttpResponse(error, status=400)
+
+
+@csrf_exempt
+def send_mail(request):
+    error = util.send_email(request.POST)
+    if not error:
+        return HttpResponse(status=204)
+    return HttpResponse(error, status=400)

@@ -7,4 +7,5 @@ urlpatterns = [
     path('setsensor', views.set_sensor, name='set_sensor'),
     path('addinfo', views.add_info, name='add_info'),
     path('updatevideo', views.update_video, name='update_video'),
+    path('sendmail', views.send_mail, name='send_mail')
 ]

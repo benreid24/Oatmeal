@@ -1,4 +1,7 @@
 import datetime
+import smtplib
+from email.message import EmailMessage
+
 
 def create_zones(temps, humidity):
     zones = []
@@ -72,3 +75,17 @@ def frequency_match_motion(motion, tz):
 
     return buckets
 
+
+def send_email(post):
+    try:
+        smtp = smtplib.SMTP('localhost')
+        msg = EmailMessage()
+        msg['Subject'] = post['subject']
+        msg['From'] = 'him@oatmeal.rocks'
+        msg['To'] = 'reidben24@gmail.com, anna.kasprzak@daemen.edu'
+        msg.set_content(post['msg'])
+        smtp.send_message(msg)
+        smtp.quit()
+    except Exception as err:
+        return f'Error: {err}'
+    return None
