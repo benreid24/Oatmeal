@@ -13,5 +13,5 @@ def get_ip():
 
 
 def start_stream():
-    process = subprocess.Popen(['./startstream.sh', STREAM_URL], shell=True, executable='/bin/bash')
+    process = subprocess.Popen(['bash', './startstream.sh', STREAM_URL])
     return process
