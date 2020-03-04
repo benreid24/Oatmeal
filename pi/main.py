@@ -1,3 +1,4 @@
+import sys
 import datetime
 import statistics
 import time
@@ -132,4 +133,9 @@ def main():
 
 
 if __name__ == '__main__':
+    if len(sys.argv) > 1:
+        t = int(sys.argv[1])
+        print(f'Delaying start for {t} seconds')
+        time.sleep(t)
+    print('Starting')
     main()
