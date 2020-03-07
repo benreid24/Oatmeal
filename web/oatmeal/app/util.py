@@ -1,4 +1,5 @@
 import datetime
+
 import smtplib
 from email.message import EmailMessage
 
@@ -56,24 +57,35 @@ def prepare_messages(messages, tz):
 
 
 def frequency_match_motion(motion, tz):
-    if not motion:
-        return []
+    now = datetime.datetime.now(datetime.timezone.utc)
+    yday = now - datetime.timedelta(days=1)
 
     bucket_len = datetime.timedelta(seconds=300)
-    bucket_beg = motion[0]
 
     buckets = []
-    i = 0
-    while i < len(motion):
+    while yday < now:
         bucket = {
-            'time': bucket_beg.astimezone(tz),
+            'time': yday.astimezone(tz),
             'count': 0
         }
-        while i < len(motion) and motion[i] < bucket_beg + bucket_len:
-            bucket['count'] += 1
-            i += 1
         buckets.append(bucket)
-        bucket_beg += bucket_len
+        yday = yday + bucket_len
+
+    yday = now - datetime.timedelta(days=1)
+    i = 0
+    for dt in motion:
+        if dt < yday or dt > now:
+            continue
+        while dt > buckets[i]['time'] + bucket_len:
+            i += 1
+        buckets[i]['count'] += 1
+
+    total = sum([b['count'] for b in buckets])
+    if total:
+        buckets = [{
+            'time': b['time'],
+            'count': b['count'] / total * 10
+        } for b in buckets]
 
     return buckets
 
