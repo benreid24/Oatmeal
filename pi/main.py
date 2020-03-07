@@ -23,8 +23,6 @@ def main():
     stream = util.start_stream()
     arduino.init()
 
-    ip = util.get_ip()
-
     last_error = None
     last_ipfetch = datetime.datetime.now()
 
