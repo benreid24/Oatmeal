@@ -65,9 +65,27 @@ def _read():
 
 def _write(data):
     print(f'Serial command: {data}')
-    init()
-    serialport.write(f'{data}\n'.encode('ascii'))
-    serialport.flush()
+
+    retries = 1
+    while retries < 4:
+        init()
+        if _try_write(data):
+            return
+        retries += 1
+    err = f'Failed to write {data} after {retries} retries'
+    print(err)
+    raise Exception(err)
+
+
+def _try_write(data):
+    global serialport
+    try:
+        serialport.write(f'{data}\n'.encode('ascii'))
+        serialport.flush()
+        return True
+    except Exception as err:
+        print(f'Error writing serial: {err}')
+        return False
 
 
 def _parse_data(data):
