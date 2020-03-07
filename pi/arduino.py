@@ -118,9 +118,9 @@ def _parse_data(data):
         if has_num:
             point['num'] = int(items[3])
             i = 4
-        if len(items) < 5:
-            print(f'Serial line too short: {line}')
-            continue
+            if len(items) < 5:
+                print(f'Serial line too short: {line}')
+                continue
         if is_float:
             point['value'] = float(items[i])
         else:
