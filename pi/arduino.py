@@ -65,6 +65,7 @@ def _read():
 
 def _write(data):
     print(f'Serial command: {data}')
+    init()
     serialport.write(f'{data}\n'.encode('ascii'))
     serialport.flush()
 
