@@ -13,6 +13,15 @@ def _check_request(post):
     if not secret.valid_pw(post['pw']):
         return 'Authentication failed'
     return ''
+    
+
+def clean():
+    now = datetime.datetime.now(datetime.timezone.utc)
+    if now.time().hour == 4 and now.time().minute == 0 or True:
+        yday = now - datetime.timedelta(days=1)
+        lweek = now - datetime.timedelta(days=7)
+        SensorReading.objects.filter(updated__lte=yday).delete()
+        InfoMessage.objects.filter(updated__lte=lweek).delete()
 
 
 def set_reading(post):
@@ -110,4 +119,4 @@ def get_video_url():
     data = VideoUrl.objects.all()
     if not data or len(data) > 1:
         return ''
-    return 'rtp://' + data[0].url
+    return data[0].url

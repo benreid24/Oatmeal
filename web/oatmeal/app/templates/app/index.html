@@ -3,6 +3,8 @@
     <title>Oatmeal</title>
 
     {% load static %}
+
+    <link rel="icon" type="image/png" href="{% static 'app/icon.png' %}"/>
     
     <script src="{% static 'app/jquery-3.4.1.min.js' %}"></script>
 
@@ -112,7 +114,7 @@
         <div class="col-xs-1"></div>
         <div class="col-xs-10">
           <div class="video-box">
-            <iframe class="video" src="https://www.youtube.com/embed/HggUhSZ7Uqk" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            <iframe class="video" src="{{ video }}" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
           </div>
         </div>
         <div class="col-xs-1"></div>

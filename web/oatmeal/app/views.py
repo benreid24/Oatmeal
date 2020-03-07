@@ -24,13 +24,15 @@ def index(request):
         'pairs': pairs,
         'zones': zones,
         'messages': messages,
-        'motion': motion
+        'motion': motion,
+        'video': db.get_video_url()
     }
     return render(request, 'app/index.html', context)
 
 
 @csrf_exempt
 def set_sensor(request):
+    db.clean()
     error = db.set_reading(request.POST)
     if not error:
         return HttpResponse(status=204)
@@ -39,6 +41,7 @@ def set_sensor(request):
 
 @csrf_exempt
 def add_info(request):
+    db.clean()
     error = db.add_info(request.POST)
     if not error:
         return HttpResponse(status=204)
