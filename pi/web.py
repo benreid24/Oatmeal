@@ -48,17 +48,6 @@ def log_message(msg, severity):
     return True
 
 
-def set_video(url):
-    params = {
-        'url': url
-    }
-    response = _send_request('/updatevideo', params)
-    if response.status != 204:
-        print('Video Error:', response.status, response.read())
-        return False
-    return True
-
-
 def send_email(subject, msg):
     params = {
         'subject': subject,

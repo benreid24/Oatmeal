@@ -9,7 +9,6 @@ import util
 import web
 
 ERROR_TIMEOUT = 30 * 60
-IP_FETCH_PERIOD = 60 * 60
 
 NAME_MAP = {
     'humid0': 'Hot Zone',
@@ -25,7 +24,6 @@ def main():
     arduino.init()
 
     ip = util.get_ip()
-    web.set_video(f'{ip}:42069')
 
     last_error = None
     last_ipfetch = datetime.datetime.now()
@@ -111,12 +109,6 @@ def main():
             print(f'High temp: {high_temp}. Low temp: {low_temp}. Humidity: {humidity_avg}')
             if high_temp and low_temp and humidity_avg:
                 controller.climate_control(now, high_temp, low_temp, humidity_avg)
-
-            # Video Feed Update
-            if (now - last_ipfetch).total_seconds() >= IP_FETCH_PERIOD:
-                last_ipfetch = now
-                ip = util.get_ip()
-                web.set_video(f'{ip}:42069')
         
         except Exception as err:
             print(f'Error: {err}')
