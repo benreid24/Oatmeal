@@ -119,6 +119,8 @@ function drawMotionLine(datapoints) {
       0: {
         gridlines: {color: 'transparent'},
         textStyle: {color: 'transparent'},
+        minValue: 0,
+        maxValue: 10
       }
     },
     hAxis: {
