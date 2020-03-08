@@ -8,7 +8,11 @@ def init():
     global serialport
     if serialport:
         if serialport.is_open:
-            serialport.close()
+            try:
+                serialport.flush()
+                serialport.close()
+            except Exception as err:
+                print(f'Error clearing port: {err}')
     serialport = serial.Serial('/dev/ttyAMA0', 115200, timeout=0.1)
 
 

@@ -15,7 +15,8 @@ NIGHT_START = datetime.time(21, 0)
 NIGHT_END = datetime.time(9, 0)
 
 MIN_HUMIDITY = 50
-RETRY_INTERVAL = 60
+RETRY_INTERVAL = 240
+MAX_HUMID_TRIES = 3
 humid_trys = None
 last_spray_try = None
 
@@ -64,15 +65,21 @@ def climate_control(now, high_temp, low_temp, humidity):
             humid_trys = 0
         elif (now - last_spray_try).total_seconds() < RETRY_INTERVAL:
             spray = False
+        if humidy_trys >= MAX_HUMID_TRIES:
+            spray = False
+            _error(f'Humidity is {humidity}% and reached max spray count')
         if spray:
             humid_trys += 1
             last_spray_try = now
             _mist(3)
-            if humid_trys > 3:
-                _error(f'Humidity is {humidity} despite {humid_trys} three second mistings')
     else:
         last_spray_try = None
         humid_trys = None
+    if humid_trys and humid_trys >= MAX_HUMID_TRIES:
+        if now.day != last_spray_try.day:
+            print('Resetting humidity retry on new day')
+            humid_trys = None
+            last_spray_try = None
 
     # Morning Spray
     if now.time().hour == NIGHT_END.hour:
@@ -83,7 +90,7 @@ def climate_control(now, high_temp, low_temp, humidity):
             mist = False
         if mist:
             morning_mist = now
-            _mist(3)
+            _mist(7)
 
     # Night Spray
     if now.time().hour == NIGHT_START.hour:
@@ -94,7 +101,7 @@ def climate_control(now, high_temp, low_temp, humidity):
             mist = False
         if mist:
             night_mist = now
-            _mist(5)
+            _mist(15)
 
 
 def _is_night(dt):

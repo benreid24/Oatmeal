@@ -27,7 +27,6 @@ def main():
     last_ipfetch = datetime.datetime.now()
 
     last_reading = datetime.datetime.now()
-    humidity_avg = 75
 
     while True:
         now = datetime.datetime.now()
@@ -38,7 +37,7 @@ def main():
 
         high_temp = None
         low_temp = None
-        humidity = []
+        humidity = None
 
         # Read Sensors
         try:
@@ -63,7 +62,10 @@ def main():
                         if reading['value'] < low_temp:
                             low_temp = reading['value']
                     elif stype == 'humid':
-                        humidity.append(reading['value'])
+                        if humidity:
+                            humidity = max(humidity, reading['value'])
+                        else:
+                            humidity = reading['value']
                 else:
                     msg = f'Arduino message: {reading.value}'
                     messages.append(msg)
@@ -102,11 +104,9 @@ def main():
                 last_reading = now
 
             # Climate Control
-            if humidity:
-                humidity_avg = statistics.mean(humidity)
-            print(f'High temp: {high_temp}. Low temp: {low_temp}. Humidity: {humidity_avg}')
-            if high_temp and low_temp and humidity_avg:
-                controller.climate_control(now, high_temp, low_temp, humidity_avg)
+            print(f'High temp: {high_temp}. Low temp: {low_temp}. Humidity: {humidity}')
+            if high_temp and low_temp and humidity:
+                controller.climate_control(now, high_temp, low_temp, humidity)
         
         except Exception as err:
             print(f'Error: {err}')
