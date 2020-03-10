@@ -5,6 +5,7 @@ from .models import InfoMessage
 from .models import VideoUrl
 
 from . import secret
+from . import util
 
 
 def _check_request(post):
@@ -87,6 +88,8 @@ def get_sensor_readings(stype, tzname):
                 'value': reading.value,
                 'time': reading.updated.astimezone(tzname)
             })
+    for key in output.keys():
+        output[key]['history'] = util.compress_timeseries(output[key]['history'], 300)
     return output
 
 
