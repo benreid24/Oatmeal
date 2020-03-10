@@ -7,7 +7,7 @@ from . import db
 from . import util
 
 DESKTOP_PC = 900
-MOBILE_PC = 300
+MOBILE_PC = 100
 
 
 def index(request):
