@@ -3,6 +3,7 @@ import time
 import threading
 import math
 import statistics
+import re
 
 import smtplib
 from email.message import EmailMessage
@@ -12,6 +13,8 @@ from . import secret
 _thread = None
 _heartbeat = None
 TIMEOUT = datetime.timedelta(minutes=5)
+
+MOBILE_AGENT_RE=re.compile(r".*(iphone|mobile|androidtouch)",re.IGNORECASE)
 
 
 def _verify():
@@ -36,6 +39,13 @@ def heartbeat():
     if not _thread:
         _thread = threading.Thread(target=_verify)
         _thread.start()
+
+
+def is_mobile(request):
+    if MOBILE_AGENT_RE.match(request.META['HTTP_USER_AGENT']):
+        return True
+    else:
+        return False
 
 
 def create_zones(temps, humidity):

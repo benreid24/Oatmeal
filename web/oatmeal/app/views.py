@@ -6,12 +6,16 @@ from pytz import timezone
 from . import db
 from . import util
 
+DESKTOP_PC = 900
+MOBILE_PC = 300
+
 
 def index(request):
     tzname = timezone('US/Eastern')
 
-    temps = db.get_sensor_readings('temp', tzname)
-    humidity = db.get_sensor_readings('humid', tzname)
+    pc = MOBILE_PC if util.is_mobile(request) else DESKTOP_PC
+    temps = db.get_sensor_readings('temp', tzname, pc)
+    humidity = db.get_sensor_readings('humid', tzname, pc)
     zones, pairs = util.create_zones(temps, humidity)
 
     messages = db.get_messages()
