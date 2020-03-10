@@ -82,16 +82,10 @@ def compress_timeseries(data, pc):
     if len(data) < 2 * pc:
         return data
 
-    smdata = []
     inc = math.ceil(len(data) / pc)
-    for i in range(0, len(data), inc):
-        j = max(i + inc, len(data))
-        smdata.append({
-            'value': statistics.mean([p['value'] for p in data[i:j]]),
-            'time': datetime.datetime.fromtimestamp(
-                statistics.mean([p['time'].timestamp() for p in data[i:j]])
-            )
-        })
+    smdata = data[0::inc]
+    smdata.append(data[-1])
+
     return smdata
 
 
