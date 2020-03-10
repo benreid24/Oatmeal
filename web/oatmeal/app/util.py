@@ -1,9 +1,39 @@
 import datetime
+import time
+import threading
 
 import smtplib
 from email.message import EmailMessage
 
 from . import secret
+
+_thread = None
+_heartbeat = None
+TIMEOUT = datetime.timedelta(minutes=5)
+
+
+def _verify():
+    global _thread
+    while True:
+        if _heartbeat:
+            if datetime.datetime.now() - _heartbeat >= TIMEOUT:
+                _send_email(
+                    'CRITICAL: Oatmeal Down',
+                    'Heartbeat stopped from Oatmeal, check on Oatmeal ASAP'
+                )
+                break
+        time.sleep(TIMEOUT.total_seconds()/2)
+    _thread = None
+
+
+def heartbeat():
+    global _thread
+    global _heartbeat
+
+    _heartbeat = datetime.datetime.now()
+    if not _thread:
+        _thread = threading.Thread(target=_verify)
+        _thread.start()
 
 
 def create_zones(temps, humidity):
@@ -93,14 +123,17 @@ def frequency_match_motion(motion, tz):
 def send_email(post):
     if not secret.valid_pw(post['pw']):
         return 'Invalid password'
+    return _send_email(post['subject'], post['msg'])
 
+
+def _send_email(subject, body):
     try:
         smtp = smtplib.SMTP('localhost')
         msg = EmailMessage()
-        msg['Subject'] = post['subject']
+        msg['Subject'] = subject
         msg['From'] = 'him@oatmeal.rocks'
         msg['To'] = 'reidben24@gmail.com, anna.kasprzak@daemen.edu'
-        msg.set_content(post['msg'])
+        msg.set_content(body)
         smtp.send_message(msg)
         smtp.quit()
     except Exception as err:

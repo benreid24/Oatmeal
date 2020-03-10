@@ -32,6 +32,7 @@ def index(request):
 
 @csrf_exempt
 def set_sensor(request):
+    util.heartbeat()
     db.clean()
     error = db.set_reading(request.POST)
     if not error:
@@ -41,6 +42,7 @@ def set_sensor(request):
 
 @csrf_exempt
 def add_info(request):
+    util.heartbeat()
     db.clean()
     error = db.add_info(request.POST)
     if not error:
