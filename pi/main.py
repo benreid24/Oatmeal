@@ -31,10 +31,6 @@ def main():
     while True:
         now = datetime.datetime.now()
 
-        # Check Video
-        if stream.poll() is not None:
-            stream = util.start_stream()
-
         high_temp = None
         low_temp = None
         humidity = None
@@ -78,11 +74,6 @@ def main():
             for msg in messages:
                 print(f'Sending message "{msg}"')
                 web.log_message(msg, web.WARNING)
-        except Exception as err:
-            print(f'Error decoding data: {err}')
-            web.log_message(f'Failed to decode arduino data: {err}', web.WARNING)
-
-        try:
 
             # Sensor read error
             if not high_temp or not low_temp:
@@ -111,7 +102,7 @@ def main():
         except Exception as err:
             print(f'Error: {err}')
             try:
-                web.log_message(f'Runtime error: {err}', web.CRITICAL)
+                web.log_message(f'Error: {err}', web.CRITICAL)
                 web.send_email(
                     'CRITICAL: Pi Encountered an Error',
                     f'Recovered from runtime error: {err}'
