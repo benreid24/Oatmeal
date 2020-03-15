@@ -20,7 +20,10 @@ MAX_HUMID_TRIES = 3
 humid_trys = None
 last_spray_try = None
 
+MORNING_MIST_LEN = 15
 morning_mist = None
+
+NIGHT_MIST_LEN = 30
 night_mist = None
 
 heat_active = False
@@ -90,7 +93,7 @@ def climate_control(now, high_temp, low_temp, humidity):
             mist = False
         if mist:
             morning_mist = now
-            _mist(7)
+            _mist(MORNING_MIST_LEN)
 
     # Night Spray
     if now.time().hour == NIGHT_START.hour:
@@ -101,7 +104,7 @@ def climate_control(now, high_temp, low_temp, humidity):
             mist = False
         if mist:
             night_mist = now
-            _mist(15)
+            _mist(NIGHT_MIST_LEN)
 
 
 def _is_night(dt):
