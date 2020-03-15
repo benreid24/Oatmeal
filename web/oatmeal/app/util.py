@@ -1,9 +1,51 @@
 import datetime
+import time
+import threading
+import math
+import statistics
+import re
 
 import smtplib
 from email.message import EmailMessage
 
 from . import secret
+
+_thread = None
+_heartbeat = None
+TIMEOUT = datetime.timedelta(minutes=5)
+
+MOBILE_AGENT_RE=re.compile(r".*(iphone|mobile|androidtouch)",re.IGNORECASE)
+
+
+def _verify():
+    global _thread
+    while True:
+        if _heartbeat:
+            if datetime.datetime.now() - _heartbeat >= TIMEOUT:
+                _send_email(
+                    'CRITICAL: Oatmeal Down',
+                    'Heartbeat stopped from Oatmeal, check on Oatmeal ASAP'
+                )
+                break
+        time.sleep(TIMEOUT.total_seconds()/2)
+    _thread = None
+
+
+def heartbeat():
+    global _thread
+    global _heartbeat
+
+    _heartbeat = datetime.datetime.now()
+    if not _thread:
+        _thread = threading.Thread(target=_verify)
+        _thread.start()
+
+
+def is_mobile(request):
+    if MOBILE_AGENT_RE.match(request.META['HTTP_USER_AGENT']):
+        return True
+    else:
+        return False
 
 
 def create_zones(temps, humidity):
@@ -44,6 +86,17 @@ def create_zones(temps, humidity):
         pairs.append(pair)
 
     return zones, pairs
+
+
+def compress_timeseries(data, pc):
+    if len(data) < 2 * pc:
+        return data
+
+    inc = math.ceil(len(data) / pc)
+    smdata = data[0::inc]
+    smdata.append(data[-1])
+
+    return smdata
 
 
 def prepare_messages(messages, tz):
@@ -93,14 +146,17 @@ def frequency_match_motion(motion, tz):
 def send_email(post):
     if not secret.valid_pw(post['pw']):
         return 'Invalid password'
+    return _send_email(post['subject'], post['msg'])
 
+
+def _send_email(subject, body):
     try:
         smtp = smtplib.SMTP('localhost')
         msg = EmailMessage()
-        msg['Subject'] = post['subject']
+        msg['Subject'] = subject
         msg['From'] = 'him@oatmeal.rocks'
         msg['To'] = 'reidben24@gmail.com, anna.kasprzak@daemen.edu'
-        msg.set_content(post['msg'])
+        msg.set_content(body)
         smtp.send_message(msg)
         smtp.quit()
     except Exception as err:

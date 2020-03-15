@@ -5,6 +5,7 @@ from .models import InfoMessage
 from .models import VideoUrl
 
 from . import secret
+from . import util
 
 
 def _check_request(post):
@@ -64,7 +65,7 @@ def set_url(post):
         return repr(exc)
 
 
-def get_sensor_readings(stype, tzname):
+def get_sensor_readings(stype, tzname, pc):
     now = datetime.datetime.now(datetime.timezone.utc)
     yday = now - datetime.timedelta(days=1)
     data = SensorReading.objects.filter(
@@ -87,6 +88,8 @@ def get_sensor_readings(stype, tzname):
                 'value': reading.value,
                 'time': reading.updated.astimezone(tzname)
             })
+    for key in output.keys():
+        output[key]['history'] = util.compress_timeseries(output[key]['history'], pc)
     return output
 
 
