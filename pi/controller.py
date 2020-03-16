@@ -68,7 +68,7 @@ def climate_control(now, high_temp, low_temp, humidity):
             humid_trys = 0
         elif (now - last_spray_try).total_seconds() < RETRY_INTERVAL:
             spray = False
-        if humidy_trys >= MAX_HUMID_TRIES:
+        if humid_trys >= MAX_HUMID_TRIES:
             spray = False
             _error(f'Humidity is {humidity}% and reached max spray count')
         if spray:
