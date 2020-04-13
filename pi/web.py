@@ -17,7 +17,7 @@ def _send_request(url, params):
         'Content-type': 'application/x-www-form-urlencoded',
         "Accept": 'text/plain'
     }
-    client = HttpClient.HTTPConnection(ENDPOINT)
+    client = HttpClient.HTTPConnection(ENDPOINT, timeout=30)
     client.request('POST', url, params, headers)
     return client.getresponse()
 
