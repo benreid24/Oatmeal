@@ -2,6 +2,7 @@ import sys
 import datetime
 import statistics
 import time
+import traceback
 
 import arduino
 import controller
@@ -101,12 +102,20 @@ def main():
         
         except Exception as err:
             print(f'Error: {err}')
+            traceback.print_tb(err.__traceback__)
             try:
                 web.log_message(f'Error: {err}', web.CRITICAL)
-                web.send_email(
-                    'CRITICAL: Pi Encountered an Error',
-                    f'Recovered from runtime error: {err}'
-                )
+                send = True
+                if not last_error:
+                    last_error = now
+                elif (now - last_error).total_seconds() < ERROR_TIMEOUT:
+                    send = False
+                if send:
+                    web.send_email(
+                        'CRITICAL: Pi Encountered an Error',
+                        f'Recovered from runtime error: {err}'
+                    )
+                    last_error = now
             except Exception as err:
                 print(f'CRITICAL: Exception while reporting on exception: {err}')
 
