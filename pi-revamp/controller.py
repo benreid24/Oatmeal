@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing  import List, Tuple
+from typing import List, Tuple
 
 from arduino.interface import ArduinoInterface
 from arduino.command import Command

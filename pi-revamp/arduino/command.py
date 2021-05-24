@@ -12,7 +12,7 @@ class CommandType(Enum):
 
 
 class Command:
-    def __init__(self, command_type: CommandType, length=None):
+    def __init__(self, command_type: CommandType, length: int=None):
         self.command_type = command_type
         if length:
             self.length = length
