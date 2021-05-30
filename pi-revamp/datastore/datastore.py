@@ -23,7 +23,7 @@ class Datastore:
         Returns the day of the month that the given event last
         occurred on. See event module for event types
         """
-        return self.events[event] if event in self.events else None
+        return self.events[event] if event in self.events else -1
 
     def set_event_day(self, event: str, day: int):
         """
