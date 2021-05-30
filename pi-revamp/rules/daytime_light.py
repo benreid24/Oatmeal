@@ -23,3 +23,4 @@ class DaytimeLightRule(Rule):
             command_set.add_command(Command(CommandType.LIGHT_ON), False)
         else:
             command_set.add_command(Command(CommandType.LIGHT_OFF), False)
+        return []
