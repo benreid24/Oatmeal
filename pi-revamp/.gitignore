@@ -1,0 +1,5 @@
+.idea
+venv
+secret.py
+__pycache__
+*.log
