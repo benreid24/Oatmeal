@@ -8,7 +8,11 @@ from datastore.datastore import Datastore
 from web.message import Message
 from rules.rule import Rule
 
-RULES: List[Rule] = []
+from rules.daytime_light import DaytimeLightRule
+
+RULES: List[Rule] = [
+    DaytimeLightRule()
+]
 
 
 def control_tank(
