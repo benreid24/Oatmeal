@@ -35,7 +35,7 @@ ALLOWED_HOSTS = [
 # Application definition
 
 INSTALLED_APPS = [
-    'app.apps.AppConfig',
+    'api.apps.AppConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -122,5 +122,5 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
-STATIC_ROOT = os.path.join(BASE_DIR, 'app/static')
-STATIC_URL = '/web/oatmeal/app/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'api/static')
+STATIC_URL = '/web/oatmeal/api/static/'
