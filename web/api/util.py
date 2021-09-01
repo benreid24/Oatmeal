@@ -2,7 +2,6 @@ import datetime
 import time
 import threading
 import math
-import statistics
 import re
 
 import smtplib

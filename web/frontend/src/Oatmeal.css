@@ -1,0 +1,22 @@
+body {
+  background-color: #353535;
+}
+
+h1 {
+  color: #d4f4e4;
+  font-style: italic;
+  font-size: 48pt;
+}
+
+p {
+  color: #cecece;
+  font-size: large;
+}
+
+.oatmeal {
+  text-align: center;
+}
+
+.oatmeal-header {
+  padding: 16px;
+}
